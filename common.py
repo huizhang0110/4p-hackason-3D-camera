@@ -1,22 +1,29 @@
-def process_load(npyImage, objSettings):
+def process_load(npyImage, npyImageDepth, objSettings):
 	objCommon['fltFocal'] = 1024 / 2.0
 	objCommon['fltBaseline'] = 40.0
 	objCommon['intWidth'] = npyImage.shape[1]
 	objCommon['intHeight'] = npyImage.shape[0]
+	objCommon['fltDepthRatio'] = 50.0 
 
 	tenImage = torch.FloatTensor(numpy.ascontiguousarray(npyImage.transpose(2, 0, 1)[None, :, :, :].astype(numpy.float32) * (1.0 / 255.0))).cuda()
-	tenDisparity = disparity_estimation(tenImage)
-	tenDisparity = disparity_adjustment(tenImage, tenDisparity)
-	tenDisparity = disparity_refinement(tenImage, tenDisparity)
-	tenDisparity = tenDisparity / tenDisparity.max() * objCommon['fltBaseline']
-	tenDepth = (objCommon['fltFocal'] * objCommon['fltBaseline']) / (tenDisparity + 0.0000001)
+	tenDepth = torch.FloatTensor(numpy.ascontiguousarray(npyImageDepth[None, None, :, :].astype(numpy.float32))).cuda()
+	tenDepth = tenDepth * objCommon['fltDepthRatio'] + objCommon['fltFocal']   # the value of depth must great than focal 
+	tenDisparity = (objCommon['fltFocal'] * objCommon['fltBaseline']) / tenDepth
+	
+	# tenDisparity = disparity_estimation(tenImage)
+	# tenDisparity = disparity_adjustment(tenImage, tenDisparity)
+	# tenDisparity = disparity_refinement(tenImage, tenDisparity)
+	# tenDisparity = tenDisparity / tenDisparity.max() * objCommon['fltBaseline']
+	# tenDepth = (objCommon['fltFocal'] * objCommon['fltBaseline']) / (tenDisparity + 0.0000001)
+	
 	tenValid = (spatial_filter(tenDisparity / tenDisparity.max(), 'laplacian').abs() < 0.03).float()
 	tenPoints = depth_to_points(tenDepth * tenValid, objCommon['fltFocal'])
 	tenUnaltered = depth_to_points(tenDepth, objCommon['fltFocal'])
 
 	objCommon['fltDispmin'] = tenDisparity.min().item()
 	objCommon['fltDispmax'] = tenDisparity.max().item()
-	objCommon['objDepthrange'] = cv2.minMaxLoc(src=tenDepth[0, 0, 128:-128, 128:-128].detach().cpu().numpy(), mask=None)
+	# objCommon['objDepthrange'] = cv2.minMaxLoc(src=tenDepth[0, 0, 128:-128, 128:-128].detach().cpu().numpy(), mask=None)
+	objCommon['objDepthrange'] = cv2.minMaxLoc(src=tenDepth[0, 0].detach().cpu().numpy(), mask=None)
 	objCommon['tenRawImage'] = tenImage
 	objCommon['tenRawDisparity'] = tenDisparity
 	objCommon['tenRawDepth'] = tenDepth

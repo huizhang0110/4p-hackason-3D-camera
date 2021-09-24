@@ -43,25 +43,28 @@ objCommon = {}
 
 exec(open('./common.py', 'r').read())
 
-exec(open('./models/disparity-estimation.py', 'r').read())
-exec(open('./models/disparity-adjustment.py', 'r').read())
-exec(open('./models/disparity-refinement.py', 'r').read())
+# exec(open('./models/disparity-estimation.py', 'r').read())
+# exec(open('./models/disparity-adjustment.py', 'r').read())
+# exec(open('./models/disparity-refinement.py', 'r').read())
 exec(open('./models/pointcloud-inpainting.py', 'r').read())
 
 ##########################################################
 
-arguments_strIn = './images/doublestrike.jpg'
+arguments_strIn = './images/corridor_rgb.png'
 arguments_strOut = './autozoom.mp4'
+arguments_strInDepth = './images/corridor_depth.png'
 
 for strOption, strArgument in getopt.getopt(sys.argv[1:], '', [ strParameter[2:] + '=' for strParameter in sys.argv[1::2] ])[0]:
 	if strOption == '--in' and strArgument != '': arguments_strIn = strArgument # path to the input image
 	if strOption == '--out' and strArgument != '': arguments_strOut = strArgument # path to where the output should be stored
+	if strOption == '--inDepth' and strArgument != '': arguments_strInDepth = strArgument # path to where the output should be stored
 # end
 
 ##########################################################
 
 if __name__ == '__main__':
 	npyImage = cv2.imread(filename=arguments_strIn, flags=cv2.IMREAD_COLOR)
+	npyImageDepth = cv2.imread(filename=arguments_strInDepth, flags=cv2.IMREAD_GRAYSCALE)
 
 	intWidth = npyImage.shape[1]
 	intHeight = npyImage.shape[0]
@@ -72,8 +75,9 @@ if __name__ == '__main__':
 	intHeight = min(int(1024 / fltRatio), 1024)
 
 	npyImage = cv2.resize(src=npyImage, dsize=(intWidth, intHeight), fx=0.0, fy=0.0, interpolation=cv2.INTER_AREA)
+	npyImageDepth = cv2.resize(src=npyImageDepth, dsize=(intWidth, intHeight), fx=0.0, fy=0.0, interpolation=cv2.INTER_AREA)
 
-	process_load(npyImage, {})
+	process_load(npyImage, npyImageDepth, {})
 
 	objFrom = {
 		'fltCenterU': intWidth / 2.0,
