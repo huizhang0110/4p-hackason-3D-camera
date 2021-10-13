@@ -64,7 +64,8 @@ for strOption, strArgument in getopt.getopt(sys.argv[1:], '', [ strParameter[2:]
 
 if __name__ == '__main__':
 	npyImage = cv2.imread(filename=arguments_strIn, flags=cv2.IMREAD_COLOR)
-	npyImageDepth = cv2.imread(filename=arguments_strInDepth, flags=cv2.IMREAD_GRAYSCALE)
+	# npyImageDepth = cv2.imread(filename=arguments_strInDepth, flags=cv2.IMREAD_GRAYSCALE)
+        npyImageDepth = np.load(arguments_strInDepth).astype(np.float32)
 
 	intWidth = npyImage.shape[1]
 	intHeight = npyImage.shape[0]

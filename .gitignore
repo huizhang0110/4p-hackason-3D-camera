@@ -1,3 +1,7 @@
 *.mp4
 *.png 
 *.jpg 
+*.so
+*.back
+*.zip
+build
