@@ -4,4 +4,7 @@
 *.so
 *.back
 *.zip
+log
+logs
+__pycache__/
 build
