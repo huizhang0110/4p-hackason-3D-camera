@@ -1,6 +1,6 @@
-expname = coffee_test
-basedir = "work_dirs/coffee_logs"
-datadir = "data/4paradigm/coffee"
+expname = plant_test
+basedir = "work_dirs/plant_logs"
+datadir = "data/4paradigm/plant"
 dataset_type = llff
 
 factor = 8

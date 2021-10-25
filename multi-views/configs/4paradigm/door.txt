@@ -1,9 +1,9 @@
-expname = coffee_test
-basedir = "work_dirs/coffee_logs"
-datadir = "data/4paradigm/coffee"
+expname = doll_test-2
+basedir = "work_dirs/door_logs"
+datadir = "data/4paradigm/door"
 dataset_type = llff
 
-factor = 8
+factor = 2
 llffhold = 8
 
 N_rand = 1024

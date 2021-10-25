@@ -1,10 +1,4 @@
-*.mp4
-*.png 
-*.jpg 
-*.so
-*.back
-*.zip
-log
-logs
+work_dirs/
+data/
 __pycache__/
-build
+work_dirs.back/

@@ -1,0 +1,28 @@
+import cv2
+import numpy as np
+import camerawrapper
+from PIL import Image
+import os 
+
+color_fpath = "color.png"
+depth_fpath = "depth.npz"
+output_fpath = "autozoom.mp4"
+
+c = camerawrapper.CameraWrapper()
+c.getColorDepthData()
+color, depth = c.getColorImgNM(), c.getDepthImgNM()
+cv2.imwrite(color_fpath, color)
+depth.save(depth_fpath)
+
+os.system(f"python autozoom.py --in {color_fpath} --inDepth {depth_fpath} --out {output_fpath}")
+
+while True:
+    # gett rgb and depth data of current frame
+    c.getColorDepthData()
+    # rgb_im = c.getColorImgNM()
+    # depth_info = c.getDepthImgNM()
+    depth_hist_im = c.getHistImgNM()
+
+    cv2.imshow('im', depth_hist_im)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break;

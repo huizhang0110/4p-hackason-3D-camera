@@ -664,7 +664,7 @@ def train():
                 quality=8
             )
             return
-
+ 
     # Prepare raybatch tensor if batching random rays
     N_rand = args.N_rand
     use_batching = not args.no_batching
@@ -700,7 +700,6 @@ def train():
     start = start + 1
     for i in trange(start, N_iters):
         time0 = time.time()
-
         # Sample random ray batch
         if use_batching:
             # Random over all images, N_rand represents batch size 
@@ -769,8 +768,8 @@ def train():
         loss.backward()
         optimizer.step()
 
-        # NOTE: IMPORTANT!
-        ###   update learning rate   ###
+        # NOTE: IMPORTANT! 
+        ###   update learning rate   ### 
         decay_rate  = 0.1
         decay_steps = args.lrate_decay * 1000
         new_lrate   = args.lrate * (decay_rate ** (global_step / decay_steps))
